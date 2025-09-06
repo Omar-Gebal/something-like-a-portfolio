@@ -12,11 +12,12 @@ const links = [
 ];
 
 function ThemeToggle() {
-  const { theme, setTheme } = useTheme();
+  const { theme, setTheme, systemTheme } = useTheme();
+  const currentTheme = theme === "system" ? systemTheme : theme;
 
   return (
     <button
-      onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+      onClick={() => setTheme(currentTheme === "dark" ? "light" : "dark")}
       className="p-2 relative w-6 h-6"
     >
       <Moon className="absolute inset-0 scale-100 dark:scale-0" />
