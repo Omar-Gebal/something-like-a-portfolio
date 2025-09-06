@@ -1,7 +1,7 @@
 import React from 'react';
 import { Coffee, WholeWord } from 'lucide-react';
 import { SiGithub, SiLinkedin } from "react-icons/si";
-import MyButton from './ui/MyButton';
+import MyButton from '../components/ui/MyButton';
 
 const socialLinks = [
   {

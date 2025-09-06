@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useTheme } from "next-themes";
 import { Moon, Sun, Menu } from "lucide-react";
 import Link from "next/link";
@@ -13,19 +13,18 @@ const links = [
 
 function ThemeToggle() {
   const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
-  if (!mounted) return null;
 
   return (
     <button
       onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-      className="p-2"
+      className="p-2 relative w-6 h-6"
     >
-      {theme === "dark" ? <Moon size={20} /> : <Sun size={20} />}
+      <Moon className="absolute inset-0 scale-100 dark:scale-0" />
+      <Sun className="absolute inset-0 scale-0 dark:scale-100" />
     </button>
   );
 }
+
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
