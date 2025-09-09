@@ -1,4 +1,3 @@
-import React from 'react';
 import { Coffee, WholeWord } from 'lucide-react';
 import { SiGithub, SiLinkedin } from "react-icons/si";
 import MyButton from '../components/ui/MyButton';
@@ -31,12 +30,12 @@ export default function Home() {
         </div>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-          {/* <MyButton type='primary'>
+          <MyButton type='primary' to='/wordle'>
             <span className="flex items-center gap-2">
               <WholeWord className="w-5 h-5 group-hover:rotate-12" />
               Solve Today's Wordle
             </span>
-          </MyButton> */}
+          </MyButton>
           
           {socialLinks.map(({ label, href, icon: Icon }) => (
             <MyButton key={label} type="secondary" href={href}>

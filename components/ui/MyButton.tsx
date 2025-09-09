@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import React from 'react';
+import Link from 'next/link';
 
 type ButtonProps = {
   children: React.ReactNode;
@@ -7,7 +7,10 @@ type ButtonProps = {
   disabled?: boolean;
   className?: string;
   type?: 'primary' | 'secondary';
-  href?: string; // ✅ add href support
+  // Internal link
+  to?: string;
+  // External link
+  href?: string;
 };
 
 const MyButton: React.FC<ButtonProps> = ({
@@ -16,6 +19,7 @@ const MyButton: React.FC<ButtonProps> = ({
   disabled = false,
   className = '',
   type = 'secondary',
+  to,
   href,
 }) => {
   const baseStyles =
@@ -23,8 +27,20 @@ const MyButton: React.FC<ButtonProps> = ({
   const variants = {
     primary:
       'bg-foreground text-background shadow-lg hover:shadow-purple-500/50',
-    secondary: 'border-2 border-black-400 hover:bg-gray-200',
+    secondary:
+      'border-2 border-black-400 hover:bg-gray-200 dark:hover:bg-gray-800',
   };
+
+  if (to) {
+    return (
+      <Link
+        href={to}
+        className={clsx(baseStyles, variants[type], className)}
+      >
+        {children}
+      </Link>
+    );
+  }
 
   if (href) {
     return (

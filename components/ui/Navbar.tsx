@@ -20,8 +20,8 @@ function ThemeToggle() {
       onClick={() => setTheme(currentTheme === "dark" ? "light" : "dark")}
       className="p-2 relative w-6 h-6"
     >
-      <Moon className="absolute inset-0 scale-100 dark:scale-0" />
-      <Sun className="absolute inset-0 scale-0 dark:scale-100" />
+      <Moon className="absolute inset-0 scale-0 dark:scale-100" />
+      <Sun className="absolute inset-0 scale-100 dark:scale-0" />
     </button>
   );
 }
@@ -32,7 +32,12 @@ export default function Navbar() {
 
   return (
     <nav className="w-full bg-background text-foreground px-4 py-2 flex items-center justify-between">
-      <div className="text-lg font-bold">Omar Emad</div>
+      <Link
+        href={'/'}
+        className="hover:text-purple-400"
+      >
+        <div className="text-lg font-bold">Omar Emad</div>
+      </Link>
 
       {/* Desktop */}
       <div className="hidden md:flex items-center gap-6">
@@ -55,7 +60,7 @@ export default function Navbar() {
         </button>
 
         {menuOpen && (
-          <div className="absolute top-14 left-0 w-full bg-background shadow-md py-4 z-50">
+          <div className="absolute top-10 left-0 w-full bg-background shadow-md py-4 z-50">
             {links.map(({ name, href }) => (
               <Link
                 key={href}
