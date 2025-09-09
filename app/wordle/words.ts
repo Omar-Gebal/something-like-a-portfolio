@@ -6,7 +6,6 @@ export async function isValidWord(word: string) {
   const wordLower = word.toLowerCase();
   const isValid = validWords.has(wordLower);
   const solution = getSolution().toLowerCase();
-  console.log({wordLower, solution});
   const letterStates: LetterState[] = wordLower.split("").map((char, i) => {
     if (!isValid) return "default";
     if (solution[i] === char) return "correct";

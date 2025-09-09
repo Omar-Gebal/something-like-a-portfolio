@@ -1,5 +1,6 @@
 import clsx from 'clsx';
 import Link from 'next/link';
+import { twMerge } from 'tailwind-merge';
 
 type ButtonProps = {
   children: React.ReactNode;
@@ -35,20 +36,20 @@ const MyButton: React.FC<ButtonProps> = ({
     return (
       <Link
         href={to}
-        className={clsx(baseStyles, variants[type], className)}
+        className={twMerge(baseStyles, variants[type], className)}
       >
         {children}
       </Link>
     );
   }
-
   if (href) {
     return (
       <a
         href={href}
         target="_blank"
         rel="noopener noreferrer"
-        className={clsx(baseStyles, variants[type], className)}
+        className={twMerge(baseStyles, variants[type], className)}
+        
       >
         {children}
       </a>
@@ -59,7 +60,7 @@ const MyButton: React.FC<ButtonProps> = ({
     <button
       onClick={onClick}
       disabled={disabled}
-      className={clsx(baseStyles, variants[type], className)}
+      className={twMerge(baseStyles, variants[type], className)}
     >
       {children}
     </button>
