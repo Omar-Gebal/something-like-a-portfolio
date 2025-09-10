@@ -279,7 +279,7 @@ export default function WordleClient() {
               </p>
             )}
 
-            <div className="mt-4 flex flex-col text-gray-700 dark:text-gray-300">
+            <div className="mt-4 flex flex-col text-foreground">
               <span className="flex justify-center items-center gap-1">
                 <Flame/> Current Streak: <b>{streak}</b>
               </span>

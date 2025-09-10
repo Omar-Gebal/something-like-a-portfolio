@@ -29,7 +29,7 @@ const MyButton: React.FC<ButtonProps> = ({
     primary:
       'bg-foreground text-background shadow-lg hover:shadow-purple-500/50',
     secondary:
-      'border-2 border-black hover:bg-gray-200 dark:hover:bg-gray-800',
+      'border-2 border-foreground hover:bg-gray-200 dark:hover:bg-gray-800',
   };
 
   if (to) {
