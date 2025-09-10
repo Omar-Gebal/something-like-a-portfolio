@@ -11,19 +11,30 @@ const GUESS_LIMIT = 6;
 const WORD_LENGTH = 5;
 
 function LetterCell({ letter, state = "default" }: { letter: string; state?: LetterState }) {
+  const [popping, setPopping] = useState(false);
+
+  useEffect(() => {
+    if (letter !== "") {
+      setPopping(true);
+      const t = setTimeout(() => setPopping(false), 50); // reset after animation
+      return () => clearTimeout(t);
+    }
+  }, [letter]);
+
   const cellClass = clsx(
-    "flex items-center justify-center text-3xl rounded-lg w-14 h-14",
+    "flex items-center justify-center text-3xl rounded-lg w-14 h-14 border transition-transform duration-50",
+    popping && "scale-110", // pop effect
     letter === "" ? "border-gray-400 dark:border-gray-600" : "border-gray-500 dark:border-gray-800",
     {
-      "border-3 border-solid": state === "default",
       "bg-emerald-500 text-white": state === "correct",
       "bg-yellow-500 text-white": state === "present",
       "bg-gray-600 text-white": state === "absent",
-    },
+    }
   );
 
   return <span className={cellClass}>{letter.toUpperCase()}</span>;
 }
+
 
 function WordRow({
   guess,
@@ -183,30 +194,48 @@ export default function WordleClient() {
     const word = letters.map((l) => l.char).join("");
     const result = await isValidWord(word);
 
-    setGuesses((prev) =>
-      prev.map((g, i) =>
-        i === idx
-          ? {
-              ...g,
-              letters: g.letters.map((l, i) => ({ ...l, state: result.letterStates[i] })),
-              isValid: result.isValid,
-              isSolution: result.isSolution,
-            }
-          : g
+    if (!result.isValid) {
+      // invalid word: mark guess invalid instantly
+      setGuesses((prev) =>
+        prev.map((g, i) =>
+          i === idx ? { ...g, isValid: false, isSolution: false } : g
         )
       );
-
-    if (result.isSolution) {
-      setIsWin(true);
-      setGameOver(true);
       return;
     }
 
-    if (result.isValid) {
-      if (currentRow < GUESS_LIMIT - 1) setCurrentRow(currentRow + 1);
-      else setGameOver(true);
-    }
+    // reveal letters gradually
+    result.letterStates.forEach((state, i) => {
+      setTimeout(() => {
+        setGuesses((prev) =>
+          prev.map((g, gi) =>
+            gi === idx
+              ? {
+                  ...g,
+                  letters: g.letters.map((l, li) =>
+                    li === i ? { ...l, state } : l
+                  ),
+                  isValid: true,
+                  isSolution: result.isSolution,
+                }
+              : g
+          )
+        );
+      }, i * 300); // 300ms delay between letters
+    });
+
+    // after last letter finishes, handle win/lose progression
+    setTimeout(() => {
+      if (result.isSolution) {
+        setIsWin(true);
+        setGameOver(true);
+      } else {
+        if (currentRow < GUESS_LIMIT - 1) setCurrentRow(currentRow + 1);
+        else setGameOver(true);
+      }
+    }, result.letterStates.length * 300 + 50);
   };
+
 
   function getKeyboardStates(guesses: Guess[]): Record<string, LetterState> {
     const priority: Record<LetterState, number> = {
