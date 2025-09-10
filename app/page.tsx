@@ -16,7 +16,7 @@ const socialLinks = [
 ];
 export default function Home() {
   return (
-    <div className="min-h-screen flex items-center justify-center p-8">
+    <div className="flex flex-1 items-center justify-center p-8">
       <main className="text-center">
         {/* Profile Section */}
         <div className="mb-12">

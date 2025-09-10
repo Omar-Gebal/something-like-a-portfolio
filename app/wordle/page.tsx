@@ -6,7 +6,7 @@ import MyButton from "@/components/ui/MyButton";
 
 export default function Page() {
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center p-6">
+    <main className="flex flex-1 flex-col items-center justify-center p-6">
       <header className="relative w-full max-w-md mb-4 flex items-center justify-center">
         <h1 className="text-4xl font-extrabold text-center">Wordle 🎯</h1>
 
