@@ -12,8 +12,8 @@ export default function Page() {
 
         <Dialog>
           <DialogTrigger asChild>
-            <MyButton className="p-2 absolute right-0">
-              <HelpCircle className="h-6 w-6" />
+            <MyButton className="w-10 h-10 p-2 flex items-center justify-center absolute right-0">
+              <span>?</span>
             </MyButton>
           </DialogTrigger>
           <DialogContent className="max-w-md">

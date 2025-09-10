@@ -2,6 +2,10 @@
 
 import { LetterState } from "./types";
 
+export async function getWordleKey() {
+  const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
+  return `wordle-${today}`;
+}
 export async function isValidWord(word: string) {
   const wordLower = word.toLowerCase();
   const isValid = validWords.has(wordLower);
@@ -23,6 +27,9 @@ function getSolution() : string {
   const index = ((diffDays % answers.length) + answers.length) % answers.length;
   return answers[index];
 }
+
+
+
 const answers = [
   "cigar",
   "rebut",
