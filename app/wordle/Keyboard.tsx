@@ -43,7 +43,7 @@ function KeyboardButton({ char, state = "default" }: KeyboardButtonProps) {
       aria-label={char}
       onClick={handleClick}
       className={clsx(
-        "flex items-center justify-center text-black rounded-md h-12 select-none transition-transform duration-100",
+        "flex items-center justify-center text-black rounded-md h-10 sm:h-12 select-none transition-transform duration-100",
         isSpecial ? "text-sm w-13" : "text-xl w-8",
         {
           "bg-emerald-500 text-white": state === "correct",

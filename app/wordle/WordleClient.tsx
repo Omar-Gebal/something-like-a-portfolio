@@ -6,6 +6,7 @@ import { Guess, Letter, LetterState } from "@/app/wordle/types";
 import Keyboard from "@/app/wordle/Keyboard";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { PartyPopper, X, Flame, Trophy } from "lucide-react";
+import { twMerge } from "tailwind-merge";
 
 const GUESS_LIMIT = 6;
 const WORD_LENGTH = 5;
@@ -21,16 +22,18 @@ function LetterCell({ letter, state = "default" }: { letter: string; state?: Let
     }
   }, [letter]);
 
-  const cellClass = clsx(
-    "flex items-center justify-center text-3xl rounded-lg w-14 h-14 border transition-transform duration-50",
+  const cellClass = twMerge(
+    "flex items-center justify-center text-2xl sm:text-3xl rounded-lg w-12 h-12 sm:w-14 sm:h-14 border-2 transition-transform duration-50",
     popping && "scale-110", // pop effect
-    letter === "" ? "border-gray-400 dark:border-gray-600" : "border-gray-500 dark:border-gray-800",
-    {
-      "bg-emerald-500 text-white": state === "correct",
-      "bg-yellow-500 text-white": state === "present",
-      "bg-gray-600 text-white": state === "absent",
-    }
+    letter === "" 
+      ? "border-gray-400 dark:border-gray-600" 
+      : "border-gray-500 dark:border-gray-800",
+    state === "correct" && "border-0 bg-emerald-500 text-white",
+    state === "present" && "border-0 bg-yellow-500 text-white",
+    state === "absent" && "border-0 bg-gray-600 text-white"
   );
+
+
 
   return <span className={cellClass}>{letter.toUpperCase()}</span>;
 }
@@ -150,21 +153,22 @@ export default function WordleClient() {
     const lastWon = streaks.lastWon || null;
 
     if (isWin) {
-      if (lastWon) {
-        const [y, m, d] = today.split("-").map(Number);
-        const yesterdayDate = new Date(Date.UTC(y, m - 1, d - 1));
-        const yesterday = yesterdayDate.toISOString().split("T")[0];
+      const [y, m, d] = today.split("-").map(Number);
+      const yesterday = new Date(Date.UTC(y, m - 1, d - 1))
+        .toISOString()
+        .split("T")[0];
 
-        if (lastWon === yesterday) {
-          newStreak = (streaks.streak || 0) + 1;
-        } else {
-          newStreak = 1;
-        }
+      if (!lastWon) {
+        newStreak = 1;
+      } else if (lastWon === today) {
+        newStreak = streaks.streak || 1;
+      } else if (lastWon === yesterday) {
+        newStreak = (streaks.streak || 0) + 1;
       } else {
         newStreak = 1;
       }
 
-      if (newStreak > highest) highest = newStreak;
+      highest = Math.max(highest, newStreak);
     } else {
       newStreak = 0; // lose breaks streak
     }
