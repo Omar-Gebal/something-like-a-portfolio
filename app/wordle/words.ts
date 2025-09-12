@@ -10,14 +10,42 @@ export async function isValidWord(word: string) {
   const wordLower = word.toLowerCase();
   const isValid = validWords.has(wordLower);
   const solution = getSolution().toLowerCase();
-  const letterStates: LetterState[] = wordLower.split("").map((char, i) => {
-    if (!isValid) return "default";
-    if (solution[i] === char) return "correct";
-    if (solution.includes(char)) return "present";
-    return "absent";
-  });
-  return { isValid, isSolution: wordLower === solution , letterStates };
+
+  const letterStates: LetterState[] = Array(wordLower.length).fill("default");
+  if (!isValid) {
+    return { isValid, isSolution: wordLower === solution, letterStates };
+  }
+
+  // Track remaining letters in solution (excluding correct matches)
+  const solutionChars = solution.split("");
+  const used = Array(solution.length).fill(false);
+
+  // mark correct
+  for (let i = 0; i < wordLower.length; i++) {
+    if (wordLower[i] === solution[i]) {
+      letterStates[i] = "correct";
+      used[i] = true; // consume this letter in solution
+    }
+  }
+
+  // mark present or absent
+  for (let i = 0; i < wordLower.length; i++) {
+    if (letterStates[i] === "default") {
+      const index = solutionChars.findIndex(
+        (char, j) => char === wordLower[i] && !used[j]
+      );
+      if (index !== -1) {
+        letterStates[i] = "present";
+        used[index] = true;
+      } else {
+        letterStates[i] = "absent";
+      }
+    }
+  }
+
+  return { isValid, isSolution: wordLower === solution, letterStates };
 }
+
 
 function getSolution() : string {
   // Use (6th September 2025) to pick the solution deterministically
