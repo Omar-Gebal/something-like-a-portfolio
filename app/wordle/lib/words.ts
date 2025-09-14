@@ -1,10 +1,11 @@
 "use server"
 
-import { LetterState } from "./types";
+import { LetterState } from "../types";
+import { STORAGE_KEYS } from "./constants";
 
 export async function getWordleKey() {
   const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
-  return `wordle-${today}`;
+  return `${STORAGE_KEYS.WORDLE_PREFIX}${today}`;
 }
 export async function isValidWord(word: string) {
   const wordLower = word.toLowerCase();

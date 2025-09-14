@@ -1,7 +1,5 @@
-import React from "react";
-import WordleClient from "./WordleClient";
+import WordleClient from "@/app/wordle/components/WordleClient";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { HelpCircle } from "lucide-react";
 import MyButton from "@/components/ui/MyButton";
 
 export default function Page() {

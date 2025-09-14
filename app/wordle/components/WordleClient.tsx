@@ -1,65 +1,41 @@
 "use client";
-import clsx from "clsx";
 import { useEffect, useState } from "react";
-import { isValidWord, getWordleKey } from "@/app/wordle/words";
-import { Guess, Letter, LetterState } from "@/app/wordle/types";
-import Keyboard from "@/app/wordle/Keyboard";
+import { isValidWord } from "../lib/words";
+import { Guess, Letter, LetterState } from "../types";
+import Keyboard from "./Keyboard";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { PartyPopper, X, Flame, Trophy } from "lucide-react";
 import { twMerge } from "tailwind-merge";
+import { useLetterCellAnimations } from "../hooks/useLetterCellAnimations";
+import { useWordleStorage } from "../hooks/useWordleStorage";
+import { GUESS_LIMIT, ANIMATION_TIMINGS } from "../lib/constants";
 
-const GUESS_LIMIT = 6;
-const WORD_LENGTH = 5;
-
-function LetterCell({
-  letter,
-  state = "default",
-  animate,
-}: {
+export interface LetterCellProps {
   letter: string;
   state?: LetterState;
   animate?: boolean;
-}) {
-  const [popping, setPopping] = useState(false);
-  const [flipping, setFlipping] = useState(false);
-  const [flippingHalf, setFlippingHalf] = useState(false);
-  //i use revelaed to make sure the color stays after the animation, and when loaded from local storage I reveal immediately
-  const [revealed, setRevealed] = useState(false);
+}
 
-  useEffect(() => {
-    if (animate && state !== "default") {
-      setFlipping(true);
+export interface WordRowProps {
+  guess: Guess;
+  isCurrent: boolean;
+  onUpdate: (letters: Letter[]) => void;
+  onSubmit: (letters: Letter[]) => void;
+  gameOver: boolean;
+  shake?: boolean;
+}
 
-      const half = setTimeout(() => setFlippingHalf(true), 300);
-      const end = setTimeout(() => {
-        setFlipping(false);
-        setFlippingHalf(false);
-        setRevealed(true);
-      }, 600);
-
-      return () => {
-        clearTimeout(half);
-        clearTimeout(end);
-      };
-    } else if (state !== "default") {
-      setRevealed(true);
-    }
-  }, [state, animate]);
-
-  useEffect(() => {
-    if (letter !== "") {
-      setPopping(true);
-      const t = setTimeout(() => setPopping(false), 50);
-      return () => clearTimeout(t);
-    }
-  }, [letter]);
-
-  const isCorrect = (flippingHalf || revealed) && state === "correct";
-  const isPresent = (flippingHalf || revealed) && state === "present";
-  const isAbsent  = (flippingHalf || revealed) && state === "absent";
+function LetterCell({ letter, state = "default", animate }: LetterCellProps) {
+  const {
+    popping,
+    flipping,
+    isCorrect,
+    isPresent,
+    isAbsent,
+  } = useLetterCellAnimations({ letter, state, animate });
 
   const cellClass = twMerge(
-    "flex items-center justify-center text-2xl sm:text-3xl rounded-lg w-12 h-12 sm:w-14 sm:h-14 border-2 transition-transform duration-50",
+    `flex items-center justify-center text-2xl sm:text-3xl rounded-lg w-12 h-12 sm:w-14 sm:h-14 border-2 transition-transform duration-${ANIMATION_TIMINGS.POP_DURATION}`,
     popping && "scale-110",
     flipping && "animate-flip",
     letter === ""
@@ -73,25 +49,7 @@ function LetterCell({
   return <span className={cellClass}>{letter.toUpperCase()}</span>;
 }
 
-
-
-
-
-function WordRow({
-  guess,
-  isCurrent,
-  onUpdate,
-  onSubmit,
-  gameOver,
-  shake,
-}: {
-  guess: Guess;
-  isCurrent: boolean;
-  onUpdate: (letters: Letter[]) => void;
-  onSubmit: (letters: Letter[]) => void;
-  gameOver: boolean;
-  shake?: boolean;
-}){
+function WordRow({ guess, isCurrent, onUpdate, onSubmit, gameOver, shake }: WordRowProps){
 
   useEffect(() => {
     if (!isCurrent || gameOver) return;
@@ -137,103 +95,30 @@ function WordRow({
   );
 }
 
-
 export default function WordleClient() {
-  const [guesses, setGuesses] = useState<Guess[]>(
-    Array.from({ length: GUESS_LIMIT }, () => ({
-      letters: Array.from({ length: WORD_LENGTH }, () => ({ char: "", state: "default" })),
-      isValid: false,
-      isSolution: false,
-    }))
-  );
-  const [currentRow, setCurrentRow] = useState(0);
+  const {
+    guesses,
+    setGuesses,
+    currentRow,
+    setCurrentRow,
+    gameOver,
+    setGameOver,
+    isWin,
+    setIsWin,
+    streak,
+    highestStreak,
+    isLoaded,
+  } = useWordleStorage();
+  
   const [shakeRow, setShakeRow] = useState<number | null>(null);
-  const [gameOver, setGameOver] = useState(false);
-  const [isWin, setIsWin] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  const [streak, setStreak] = useState(0);
-  const [highestStreak, setHighestStreak] = useState(0);
-  const [storageKey, setStorageKey] = useState<string | null>(null);
-
-  // --- Load state on mount
+  // Open dialog when game ends
   useEffect(() => {
-    (async () => {
-      const key = await getWordleKey(); // server action
-      setStorageKey(key);
-
-      const saved = localStorage.getItem(key);
-      if (saved) {
-        const state = JSON.parse(saved);
-        setGuesses(state.guesses);
-        setCurrentRow(state.currentRow);
-        setGameOver(state.gameOver);
-        setIsWin(state.isWin);
-      }
-
-      const streaks = JSON.parse(localStorage.getItem("wordle-streaks") || "{}");
-      setStreak(streaks.streak || 0);
-      setHighestStreak(streaks.highest || 0);
-    })();
-  }, []);
-
-  // save local storage when state changes
-  useEffect(() => {
-    if (!storageKey) return;
-    localStorage.setItem(
-      storageKey,
-      JSON.stringify({
-        guesses,
-        currentRow,
-        gameOver,
-        isWin,
-      })
-    );
-    if (gameOver) setDialogOpen(true);
-
-  }, [guesses, currentRow, gameOver, isWin, storageKey]);
-
-  // streaks
-  useEffect(() => {
-    if (!gameOver || !storageKey) return;
-
-    // Extract today's server date from the key
-    const today = storageKey.replace("wordle-", "");
-    const streaks = JSON.parse(localStorage.getItem("wordle-streaks") || "{}");
-
-    let newStreak = 0;
-    let highest = streaks.highest || 0;
-    const lastWon = streaks.lastWon || null;
-
-    if (isWin) {
-      const [y, m, d] = today.split("-").map(Number);
-      const yesterday = new Date(Date.UTC(y, m - 1, d - 1))
-        .toISOString()
-        .split("T")[0];
-
-      if (!lastWon) {
-        newStreak = 1;
-      } else if (lastWon === today) {
-        newStreak = streaks.streak || 1;
-      } else if (lastWon === yesterday) {
-        newStreak = (streaks.streak || 0) + 1;
-      } else {
-        newStreak = 1;
-      }
-
-      highest = Math.max(highest, newStreak);
-    } else {
-      newStreak = 0; // lose breaks streak
+    if (gameOver && isLoaded) {
+      setDialogOpen(true);
     }
-
-    setStreak(newStreak);
-    setHighestStreak(highest);
-
-    localStorage.setItem(
-      "wordle-streaks",
-      JSON.stringify({ streak: newStreak, highest, lastWon: isWin ? today : lastWon })
-    );
-  }, [gameOver, isWin, storageKey]);
+  }, [gameOver, isLoaded]);
 
 
 
@@ -256,7 +141,7 @@ export default function WordleClient() {
         )
       );
       setShakeRow(idx);
-      setTimeout(() => setShakeRow(null), 400);
+      setTimeout(() => setShakeRow(null), ANIMATION_TIMINGS.SHAKE_DURATION);
       return;
     }
 
@@ -277,7 +162,7 @@ export default function WordleClient() {
               : g
           )
         );
-      }, i * 300);
+      }, i * ANIMATION_TIMINGS.LETTER_REVEAL_DELAY);
     });
 
     setTimeout(() => {
@@ -288,7 +173,7 @@ export default function WordleClient() {
         if (currentRow < GUESS_LIMIT - 1) setCurrentRow(currentRow + 1);
         else setGameOver(true);
       }
-    }, result.letterStates.length * 300 + 50);
+    }, result.letterStates.length * ANIMATION_TIMINGS.LETTER_REVEAL_DELAY + 50);
   };
 
 

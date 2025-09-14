@@ -1,7 +1,7 @@
+import { useEffect, useState } from "react";
 import clsx from "clsx";
 import { Delete } from "lucide-react";
-import { LetterState } from "@/app/wordle/types";
-import { useEffect, useState } from "react";
+import { LetterState } from "../types";
 
 type KeyboardButtonProps = {
   char: string;
