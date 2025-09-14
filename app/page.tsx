@@ -32,7 +32,7 @@ export default function Home() {
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
           <MyButton type='primary' to='/wordle'>
             <span className="flex items-center gap-2">
-              <WholeWord className="w-5 h-5 group-hover:rotate-12" />
+              <WholeWord className="w-5 h-5 group-hover:rotate-12 animate-wiggle" />
               Solve Today's Wordle
             </span>
           </MyButton>

@@ -18,10 +18,10 @@ function ThemeToggle() {
   return (
     <button
       onClick={() => setTheme(currentTheme === "dark" ? "light" : "dark")}
-      className="p-2 relative w-6 h-6"
+      className="p-2 relative w-6 h-6 cursor-pointer transform transition-transform hover:scale-110"
     >
-      <Moon className="absolute inset-0 scale-0 dark:scale-100" />
-      <Sun className="absolute inset-0 scale-100 dark:scale-0" />
+      <Moon className="absolute inset-0 scale-0 dark:scale-100 transition-transform" />
+      <Sun className="absolute inset-0 scale-100 dark:scale-0 transition-transform" />
     </button>
   );
 }

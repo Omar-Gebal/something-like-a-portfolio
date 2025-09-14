@@ -11,32 +11,70 @@ import { twMerge } from "tailwind-merge";
 const GUESS_LIMIT = 6;
 const WORD_LENGTH = 5;
 
-function LetterCell({ letter, state = "default" }: { letter: string; state?: LetterState }) {
+function LetterCell({
+  letter,
+  state = "default",
+  animate,
+}: {
+  letter: string;
+  state?: LetterState;
+  animate?: boolean;
+}) {
   const [popping, setPopping] = useState(false);
+  const [flipping, setFlipping] = useState(false);
+  const [flippingHalf, setFlippingHalf] = useState(false);
+  //i use revelaed to make sure the color stays after the animation, and when loaded from local storage I reveal immediately
+  const [revealed, setRevealed] = useState(false);
+
+  useEffect(() => {
+    if (animate && state !== "default") {
+      setFlipping(true);
+
+      const half = setTimeout(() => setFlippingHalf(true), 300);
+      const end = setTimeout(() => {
+        setFlipping(false);
+        setFlippingHalf(false);
+        setRevealed(true);
+      }, 600);
+
+      return () => {
+        clearTimeout(half);
+        clearTimeout(end);
+      };
+    } else if (state !== "default") {
+      setRevealed(true);
+    }
+  }, [state, animate]);
 
   useEffect(() => {
     if (letter !== "") {
       setPopping(true);
-      const t = setTimeout(() => setPopping(false), 50); // reset after animation
+      const t = setTimeout(() => setPopping(false), 50);
       return () => clearTimeout(t);
     }
   }, [letter]);
 
+  const isCorrect = (flippingHalf || revealed) && state === "correct";
+  const isPresent = (flippingHalf || revealed) && state === "present";
+  const isAbsent  = (flippingHalf || revealed) && state === "absent";
+
   const cellClass = twMerge(
     "flex items-center justify-center text-2xl sm:text-3xl rounded-lg w-12 h-12 sm:w-14 sm:h-14 border-2 transition-transform duration-50",
-    popping && "scale-110", // pop effect
-    letter === "" 
-      ? "border-gray-400 dark:border-gray-600" 
+    popping && "scale-110",
+    flipping && "animate-flip",
+    letter === ""
+      ? "border-gray-400 dark:border-gray-600"
       : "border-gray-500 dark:border-gray-800",
-    state === "correct" && "border-0 bg-emerald-500 text-white",
-    state === "present" && "border-0 bg-yellow-500 text-white",
-    state === "absent" && "border-0 bg-gray-600 text-white"
+    isCorrect && "border-0 bg-emerald-500 text-white",
+    isPresent && "border-0 bg-yellow-500 text-white",
+    isAbsent  && "border-0 bg-gray-600 text-white"
   );
-
-
 
   return <span className={cellClass}>{letter.toUpperCase()}</span>;
 }
+
+
+
 
 
 function WordRow({
@@ -45,13 +83,16 @@ function WordRow({
   onUpdate,
   onSubmit,
   gameOver,
+  shake,
 }: {
   guess: Guess;
   isCurrent: boolean;
   onUpdate: (letters: Letter[]) => void;
   onSubmit: (letters: Letter[]) => void;
   gameOver: boolean;
-}) {
+  shake?: boolean;
+}){
+
   useEffect(() => {
     if (!isCurrent || gameOver) return;
 
@@ -60,10 +101,14 @@ function WordRow({
       const cursor = nextLetters.findIndex((l) => l.char === "");
 
       if (e.key.length === 1 && /^[a-zA-Z]$/.test(e.key)) {
-        if (cursor !== -1) nextLetters[cursor] = { ...nextLetters[cursor], char: e.key.toUpperCase() };
+        if (cursor !== -1) {
+          nextLetters[cursor] = { ...nextLetters[cursor], char: e.key.toUpperCase() };
+        }
       } else if (e.key === "Backspace") {
         const deleteIndex = cursor === -1 ? guess.letters.length - 1 : cursor - 1;
-        if (deleteIndex >= 0) nextLetters[deleteIndex] = { ...nextLetters[deleteIndex], char: "" };
+        if (deleteIndex >= 0) {
+          nextLetters[deleteIndex] = { ...nextLetters[deleteIndex], char: "" };
+        }
       }
 
       onUpdate(nextLetters);
@@ -78,13 +123,20 @@ function WordRow({
   }, [isCurrent, guess, onUpdate, onSubmit, gameOver]);
 
   return (
-    <div className="flex gap-1">
+    <div className={twMerge("flex gap-1", shake && "animate-shake")}>
       {guess.letters.map((letter, idx) => (
-        <LetterCell key={idx} letter={letter.char} state={letter.state} />
+        <LetterCell 
+          key={idx} 
+          letter={letter.char} 
+          state={letter.state} 
+          animate={isCurrent && !gameOver} 
+        />
+
       ))}
     </div>
   );
 }
+
 
 export default function WordleClient() {
   const [guesses, setGuesses] = useState<Guess[]>(
@@ -95,6 +147,7 @@ export default function WordleClient() {
     }))
   );
   const [currentRow, setCurrentRow] = useState(0);
+  const [shakeRow, setShakeRow] = useState<number | null>(null);
   const [gameOver, setGameOver] = useState(false);
   const [isWin, setIsWin] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -124,7 +177,7 @@ export default function WordleClient() {
     })();
   }, []);
 
-  // --- Save state after each change
+  // save local storage when state changes
   useEffect(() => {
     if (!storageKey) return;
     localStorage.setItem(
@@ -140,7 +193,7 @@ export default function WordleClient() {
 
   }, [guesses, currentRow, gameOver, isWin, storageKey]);
 
-  // --- Handle streaks
+  // streaks
   useEffect(() => {
     if (!gameOver || !storageKey) return;
 
@@ -184,14 +237,12 @@ export default function WordleClient() {
 
 
 
-  // --- Update guess
   const updateGuess = (idx: number, letters: Letter[]) => {
     setGuesses((prev) =>
       prev.map((g, i) => (i === idx ? { ...g, letters } : g))
     );
   };
 
-  // --- Submit guess
   const submitGuess = async (idx: number, letters: Letter[]) => {
     if (gameOver) return;
 
@@ -199,16 +250,17 @@ export default function WordleClient() {
     const result = await isValidWord(word);
 
     if (!result.isValid) {
-      // invalid word: mark guess invalid instantly
       setGuesses((prev) =>
         prev.map((g, i) =>
           i === idx ? { ...g, isValid: false, isSolution: false } : g
         )
       );
+      setShakeRow(idx);
+      setTimeout(() => setShakeRow(null), 400);
       return;
     }
 
-    // reveal letters gradually
+
     result.letterStates.forEach((state, i) => {
       setTimeout(() => {
         setGuesses((prev) =>
@@ -225,10 +277,9 @@ export default function WordleClient() {
               : g
           )
         );
-      }, i * 300); // 300ms delay between letters
+      }, i * 300);
     });
 
-    // after last letter finishes, handle win/lose progression
     setTimeout(() => {
       if (result.isSolution) {
         setIsWin(true);
@@ -274,6 +325,7 @@ export default function WordleClient() {
           onUpdate={(letters) => updateGuess(idx, letters)}
           onSubmit={(letters) => submitGuess(idx, letters)}
           gameOver={gameOver}
+          shake={shakeRow === idx}
         />
       ))}
 
