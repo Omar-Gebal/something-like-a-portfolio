@@ -1,12 +1,15 @@
 "use server"
 
+import dayjs from "dayjs";
 import { LetterState } from "../types";
 import { STORAGE_KEYS } from "./constants";
 
 export async function getWordleKey() {
-  const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
+  // YYYY-MM-DD
+  const today = dayjs().format("YYYY-MM-DD");
   return `${STORAGE_KEYS.WORDLE_PREFIX}${today}`;
 }
+
 export async function isValidWord(word: string) {
   const wordLower = word.toLowerCase();
   const isValid = validWords.has(wordLower);
@@ -17,7 +20,6 @@ export async function isValidWord(word: string) {
     return { isValid, isSolution: wordLower === solution, letterStates };
   }
 
-  // Track remaining letters in solution (excluding correct matches)
   const solutionChars = solution.split("");
   const used = Array(solution.length).fill(false);
 
@@ -25,7 +27,7 @@ export async function isValidWord(word: string) {
   for (let i = 0; i < wordLower.length; i++) {
     if (wordLower[i] === solution[i]) {
       letterStates[i] = "correct";
-      used[i] = true; // consume this letter in solution
+      used[i] = true;
     }
   }
 
@@ -47,17 +49,14 @@ export async function isValidWord(word: string) {
   return { isValid, isSolution: wordLower === solution, letterStates };
 }
 
-
-function getSolution() : string {
+function getSolution(): string {
   // Use (6th September 2025) to pick the solution deterministically
-  const baseDate = new Date(2025, 8, 6);
-  const today = new Date();
-  const diffDays = Math.floor((today.getTime() - baseDate.getTime()) / (1000 * 60 * 60 * 24));
+  const baseDate = dayjs("2025-09-06");
+  const today = dayjs();
+  const diffDays = today.diff(baseDate, "day"); // direct day diff
   const index = ((diffDays % answers.length) + answers.length) % answers.length;
   return answers[index];
 }
-
-
 
 const answers = [
   "cigar",
