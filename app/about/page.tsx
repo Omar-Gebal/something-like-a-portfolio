@@ -2,6 +2,7 @@ import { Separator } from "@/components/ui/separator";
 import dayjs from "dayjs";
 import Link from "next/link";
 import { twMerge } from "tailwind-merge";
+import WorkExperienceMapper from "./components/WorkExperienceMapper";
 
 const skills = {
   languages: ["Go", "Typescript", "Python", "Dart"],
@@ -48,8 +49,8 @@ export default function Page({ searchParams }: PageProps) {
         <div className="col-span-1">
           <h2 className="text-lg font-semibold">Introduction</h2>
           <p className="mt-2 leading-relaxed dark:text-white">
-            My name is Omar Emad Gebal, I am a fullstack software engineer with{" "}
-            {yearsOfTechExperience}+ years of professional software engineering
+            My name is Omar Emad Gebal, I am a fullstack software engineer with
+            {` ${yearsOfTechExperience}`}+ years of professional software engineering
             experience with a rich background in graphic design (another 2 years
             of experience).
           </p>
@@ -89,6 +90,7 @@ export default function Page({ searchParams }: PageProps) {
             </div>
           </div>
       </section>
+      <WorkExperienceMapper/>
     </main>
   );
 }
