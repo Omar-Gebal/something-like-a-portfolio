@@ -20,8 +20,8 @@ export default function WorkExperienceMapper() {
                     <Image
                         src={exp.company.icon}
                         alt="Company Logo"
-                        width={64}
-                        height={64}
+                        width={500}
+                        height={500}
                         className="rounded-md w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20"
                     />
 

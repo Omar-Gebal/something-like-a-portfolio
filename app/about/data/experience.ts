@@ -1,13 +1,12 @@
 import dayjs from "dayjs";
 import { WorkExperience } from "./types";
 
-import utopiaLogo from "@/app/assets/utopia-adevertising-egypt.png";
-import divineTouchLogo from "@/app/assets/divine-touch.jpeg";
-import shatableeLogo from "@/app/assets/shatablee.jpeg";
-// import luciqLogo from "@/app/assets/luciq.png";
-// import hobbifyLogo from "@/app/assets/hobbify.png";
-// import coachAcademyLogo from "@/app/assets/coach-academy.png";
-// import dafLogo from "@/app/assets/daf.png";
+import utopiaLogo from "@/app/assets/utopia-advertising-egypt.png";
+import divineTouchLogo from "@/app/assets/divine-touch.png";
+import shatableeLogo from "@/app/assets/shatablee.png";
+import luciqLogo from "@/app/assets/luciq.png";
+import genericStartupLogo from "@/app/assets/generic-startup.png";
+import coachAcademyLogo from "@/app/assets/coach-academy.png";
 
 export const experience: WorkExperience[] = [
   {
@@ -15,30 +14,29 @@ export const experience: WorkExperience[] = [
       name: "Luciq",
       organisationUrl: "https://www.luciq.ai",
       location: "San Francisco, California, United States · Hybrid",
-      icon: divineTouchLogo,
+      icon: luciqLogo,
     },
     roles: [
       {
-        title: "Back End Developer",
+        title: "Software Engineer (mainly backend)",
         employmentType: "Part-time",
         description:
-          "Developing backend services using Go and Next.js. Building performant REST APIs and integrating backend logic with front-end applications.",
+          "Developing services using Go, rails, vue and react",
         descriptionPoints: [
-          "Designing and maintaining scalable REST APIs with Go.",
-          "Implementing integrations between backend services and Next.js apps.",
-          "Optimizing database queries for performance and reliability.",
+          "Finished a project that helped save 40k+ USD yearly while improving the old system using Go and react",
+          "Mentored an intern and helped him be able to contribute heavily to running projects",
+          "Helped in suggesting better ways to handle external service authentication and migrating to the new approach"
         ],
         startDate: dayjs("2024-09-01"),
       },
       {
-        title: "Back End Developer",
+        title: "Software Engineer (mainly backend)",
         employmentType: "Internship",
         description:
-          "Contributed to backend development using Go and Next.js. Focused on building scalable REST APIs and improving server performance.",
+          "Used Go, Mysql and React to build systems and deployed them on AWS",
         descriptionPoints: [
-          "Implemented CRUD endpoints for multiple microservices.",
-          "Improved API latency by optimizing middleware and caching.",
-          "Collaborated with frontend developers to debug and enhance API reliability.",
+          "Developed phase 1 of a project that helped save 40k+ USD yearly using Go and react",
+          "Built an internal go visualisation tool that helps graph project internal package dependencies excluding any external ones",
         ],
         startDate: dayjs("2024-07-01"),
         endDate: dayjs("2024-09-30"),
@@ -48,9 +46,9 @@ export const experience: WorkExperience[] = [
   {
     company: {
       name: "Hobbify",
-      organisationUrl: "https://hobbify.example.com",
+      organisationUrl: "https://en.wikipedia.org/wiki/Startup_company",
       location: "Cairo, Egypt · Remote",
-      icon: divineTouchLogo,
+      icon: genericStartupLogo,
     },
     roles: [
       {
@@ -75,7 +73,7 @@ export const experience: WorkExperience[] = [
   {
     company: {
       name: "Divine Touch Productions",
-      organisationUrl: "https://divinetouch.example.com",
+      organisationUrl: "https://www.facebook.com/DivineTouchProductions/",
       location: "Cairo, Egypt",
       icon: divineTouchLogo,
     },
@@ -112,7 +110,7 @@ export const experience: WorkExperience[] = [
   {
     company: {
       name: "Shatablee",
-      organisationUrl: "https://shatablee.example.com",
+      organisationUrl: "https://www.facebook.com/shatablee/",
       location: "Cairo, Egypt",
       icon: shatableeLogo,
     },
@@ -135,9 +133,9 @@ export const experience: WorkExperience[] = [
   {
     company: {
       name: "Coach Academy ME",
-      organisationUrl: "https://coachacademy.example.com",
+      organisationUrl: "https://coach-academy.net",
       location: "Cairo, Egypt",
-      icon: divineTouchLogo,
+      icon: coachAcademyLogo,
     },
     roles: [
       {
