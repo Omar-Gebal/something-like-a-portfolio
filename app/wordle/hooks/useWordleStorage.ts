@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { getWordleKey } from "../lib/words";
 import { Guess } from "../types";
 import { GUESS_LIMIT, WORD_LENGTH, STORAGE_KEYS } from "../lib/constants";
+import dayjs from "dayjs";
 
 interface GameState {
   guesses: Guess[];
@@ -107,24 +108,22 @@ export function useWordleStorage(): UseWordleStorageReturn {
         const lastWon = streaks.lastWon || null;
 
         if (isWin) {
-        const [y, m, d] = today.split("-").map(Number);
-        const yesterday = new Date(Date.UTC(y, m - 1, d - 1))
-            .toISOString()
-            .split("T")[0];
+            const yesterday = dayjs(today).subtract(1, "day").format("YYYY-MM-DD");
 
-        if (!lastWon) {
-            newStreak = 1;
-        } else if (lastWon === today) {
-            newStreak = streaks.streak || 1;
-        } else if (lastWon === yesterday) {
-            newStreak = (streaks.streak || 0) + 1;
-        } else {
-            newStreak = 1;
-        }
 
-        highest = Math.max(highest, newStreak);
+            if (!lastWon) {
+                newStreak = 1;
+            } else if (lastWon === today) {
+                newStreak = streaks.streak || 1;
+            } else if (lastWon === yesterday) {
+                newStreak = (streaks.streak || 0) + 1;
+            } else {
+                newStreak = 1;
+            }
+
+            highest = Math.max(highest, newStreak);
         } else {
-        newStreak = 0; // lose breaks streak
+            newStreak = 0; // lose breaks streak
         }
 
         setStreak(newStreak);

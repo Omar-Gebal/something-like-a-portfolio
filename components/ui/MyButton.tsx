@@ -1,4 +1,3 @@
-import clsx from 'clsx';
 import Link from 'next/link';
 import { twMerge } from 'tailwind-merge';
 
@@ -29,7 +28,7 @@ const MyButton: React.FC<ButtonProps> = ({
     primary:
       'bg-foreground text-background shadow-lg hover:shadow-purple-500/50',
     secondary:
-      'border-2 border-foreground hover:bg-gray-200 dark:hover:bg-gray-800',
+      'border-2 border-foreground hover:bg-purple-200 dark:hover:bg-purple-800',
   };
 
   if (to) {
