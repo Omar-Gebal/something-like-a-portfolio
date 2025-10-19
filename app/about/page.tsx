@@ -8,7 +8,7 @@ export default function Page() {
   const yearsOfTechExperience = now.diff(firstTechJobDate, "year");
 
   return (
-    <main className="px-8 py-6 max-w-6xl mx-auto">
+    <main className="px-6 py-6 max-w-6xl mx-auto">
       <h1 className="text-3xl font-bold mb-8">About me</h1>
 
       <section className="grid grid-cols-1 md:grid-cols-2 gap-12">
