@@ -10,7 +10,7 @@ const links = [
   { name: "Home", href: "/" },
   // { name: "Projects", href: "/projects" },
   { name: "About", href: "/about" },
-  // { name: "Contact", href: "/contact" },
+  { name: "Digest", href: "/digest" },
 ];
 
 function ThemeToggle() {
