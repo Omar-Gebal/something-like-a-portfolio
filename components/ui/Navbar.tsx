@@ -10,7 +10,7 @@ const links = [
   { name: "Home", href: "/" },
   // { name: "Projects", href: "/projects" },
   { name: "About", href: "/about" },
-  // { name: "Contact", href: "/contact" },
+  // { name: "Digest", href: "/digest" },
 ];
 
 function ThemeToggle() {
@@ -36,7 +36,7 @@ export default function Navbar() {
 
   return (
     <nav className="sticky top-0 z-50 bg-background/80 backdrop-blur-md">
-      <div className="flex items-center justify-between py-3 px-8">
+      <div className="flex items-center justify-between py-3 px-6">
         {/* Logo */}
         <Link href="/" className="text-lg font-bold hover:text-orange-500 transition-colors">
           Omar Emad

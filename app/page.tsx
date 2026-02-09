@@ -1,4 +1,4 @@
-import { Coffee, WholeWord } from 'lucide-react';
+import { CodeXml, WholeWord } from 'lucide-react';
 import { SiGithub, SiLinkedin } from "react-icons/si";
 import MyButton from '../components/ui/MyButton';
 
@@ -30,7 +30,14 @@ export default function Home() {
         </div>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-          <MyButton type='primary' to='/wordle'>
+          <MyButton type='primary' to='/leetcode-prep'>
+            <span className="flex items-center gap-2">
+              <CodeXml className="w-5 h-5 group-hover:rotate-12 animate-wiggle" />
+              Practice Leetcode
+            </span>
+          </MyButton>
+
+          <MyButton type='secondary' to='/wordle'>
             <span className="flex items-center gap-2">
               <WholeWord className="w-5 h-5 group-hover:rotate-12 animate-wiggle" />
               Solve Today's Wordle

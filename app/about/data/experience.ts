@@ -13,7 +13,7 @@ export const experience: WorkExperience[] = [
     company: {
       name: "Luciq",
       organisationUrl: "https://www.luciq.ai",
-      location: "San Francisco, California, United States · Hybrid",
+      location: "San Francisco, California, United States · Remote",
       icon: luciqLogo,
     },
     roles: [
