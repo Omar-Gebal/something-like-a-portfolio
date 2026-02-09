@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
 import WorkExperienceMapper from "./components/WorkExperienceMapper";
 import SkillsFilter from "./components/SkillsFilter";
+import { Suspense } from "react";
 
 export default function Page() {
   const firstTechJobDate = dayjs("2021-09-01");
@@ -28,7 +29,9 @@ export default function Page() {
         </div>
 
         <div className="col-span-1">
-          <SkillsFilter />
+          <Suspense fallback={<div className="h-32" />}>
+            <SkillsFilter />
+          </Suspense>
         </div>
       </section>
       <WorkExperienceMapper/>
