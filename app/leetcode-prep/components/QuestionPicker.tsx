@@ -1,17 +1,33 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Category, Question } from '../data/types';
 import clsx from 'clsx';
 
-
 export default function QuestionPicker({ data }: { data: Category[] }) {
-  const [selectedCategories, setSelectedCategories] = useState<string[]>(
-    data.map((cat) => cat.categoryName)
-  );
-  const [randomQuestion, setRandomQuestion] = useState<Question | null>(null);
-
   const allCategoryNames = data.map((cat) => cat.categoryName);
+  
+  const [selectedCategories, setSelectedCategories] = useState<string[]>(allCategoryNames);
+  const [randomQuestion, setRandomQuestion] = useState<Question | null>(null);
+  const [isLoaded, setIsLoaded] = useState(false);
+  useEffect(() => {
+    const saved = localStorage.getItem('pickedCategories');
+    if (saved) {
+      try {
+        setSelectedCategories(JSON.parse(saved));
+      } catch (error) {
+        console.error('Error parsing saved categories:', error);
+      }
+    }
+    setIsLoaded(true);
+  }, []);
+
+  useEffect(() => {
+    if (isLoaded) {
+      localStorage.setItem('pickedCategories', JSON.stringify(selectedCategories));
+    }
+  }, [selectedCategories, isLoaded]);
+
   const isAllSelected = selectedCategories.length === allCategoryNames.length;
 
   const toggleCategory = (name: string) => {
@@ -41,6 +57,10 @@ export default function QuestionPicker({ data }: { data: Category[] }) {
     const random = pool[Math.floor(Math.random() * pool.length)];
     setRandomQuestion(random);
   };
+
+  // Prevent hydration mismatch (Optional: hides toggle buttons until storage is loaded)
+  // If you don't mind a slight UI flash, you can remove this check.
+  if (!isLoaded) return <div className="mt-8">Loading preferences...</div>;
 
   return (
     <div className="mt-8">
